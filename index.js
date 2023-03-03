@@ -1,33 +1,54 @@
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
-const log4js = require('./util/log_util');
-const commonUtil = require('./util/common_util');
-const recordModel = require('./db/record_model');
-const RedisClient = require('./redis/redis');
+const log4js = require("./util/log_util");
+const commonUtil = require("./util/common_util");
+const recordModel = require("./db/record_model");
+const RedisClient = require("./redis/redis");
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static("public"));
 
+const logger = log4js.getLogger("default");
+logger.info("/*********=====zzhtestnodeservice*********/");
 
 // 首页
 app.get("/", async (req, res) => {
   let begin = Date.now();
   res.sendFile(path.join(__dirname, "index.html"));
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
+  logger.info(commonUtil.printLog(req, Date.now() - begin, true));
+});
+
+// 增加的一个testservice
+app.get("/zzhtest", async (req, res) => {
+  let begin = Date.now();
+  res.json({
+    stat: "ok",
+    data: {
+      name: "zzhtest",
+      value: null,
+    },
+  });
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, true));
 });
 
 // 服务访问
 app.get("/service", async (req, res) => {
   let begin = Date.now();
-  let version = process.env.PUB_SERVICE_REVISION == undefined ? 'express-demo' : process.env.PUB_SERVICE_REVISION;
-  let hostName = process.env.HOSTNAME == undefined ? 'express-demo' : process.env.HOSTNAME;
-  let result = '欢迎使用云托管!&服务版本：' + version + '&实例主机：' + hostName;
+  let version =
+    process.env.PUB_SERVICE_REVISION == undefined
+      ? "express-demo"
+      : process.env.PUB_SERVICE_REVISION;
+  let hostName =
+    process.env.HOSTNAME == undefined ? "express-demo" : process.env.HOSTNAME;
+  let result =
+    "欢迎使用云托管!&服务版本：" + version + "&实例主机：" + hostName;
   res.send(result);
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, true));
 });
 
@@ -35,35 +56,31 @@ app.get("/service", async (req, res) => {
 app.get("/database/getList", async (req, res) => {
   let begin = Date.now();
   const result = recordModel.getList(req, res);
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, result));
 });
-
-
 
 // 新增记录
 app.post("/database/addRecord", async (req, res) => {
   let begin = Date.now();
   const result = recordModel.addRecord(req, res);
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printPostLog(req, Date.now() - begin, result));
 });
-
 
 //删除记录
 app.get("/database/deleteRecord", async (req, res) => {
   let begin = Date.now();
   const result = recordModel.deleteRecord(req, res);
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, result));
 });
-
 
 // 缓存赋值服务
 app.get("/redis/set", async (req, res) => {
   let begin = Date.now();
   await RedisClient.set(req.query.key, req.query.value, res);
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, true));
 });
 
@@ -71,10 +88,9 @@ app.get("/redis/set", async (req, res) => {
 app.get("/redis/get", async (req, res) => {
   let begin = Date.now();
   await RedisClient.get(req.query.key, res);
-  const logger = log4js.getLogger('MVC-LOGGER');
+  const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, true));
 });
-
 
 const port = process.env.PORT | 80;
 
