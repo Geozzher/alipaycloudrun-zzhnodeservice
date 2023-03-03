@@ -30,7 +30,7 @@ app.get("/zzhtest", async (req, res) => {
     stat: "ok",
     data: {
       name: "zzhtest",
-      value: null,
+      value: JSON.stringify(req.query),
     },
   });
   const logger = log4js.getLogger("MVC-LOGGER");
