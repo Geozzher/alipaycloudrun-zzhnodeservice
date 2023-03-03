@@ -13,6 +13,7 @@ app.use(express.static("public"));
 
 const logger = log4js.getLogger("default");
 logger.info("/*********=====zzhtestnodeservice*********/");
+logger.info("hello zhtestnodeservice ");
 
 // 首页
 app.get("/", async (req, res) => {
@@ -34,6 +35,7 @@ app.get("/zzhtest", async (req, res) => {
   });
   const logger = log4js.getLogger("MVC-LOGGER");
   logger.info(commonUtil.printLog(req, Date.now() - begin, true));
+  logger.info(`/zzhtes--${JSON.stringify(req.query)}`);
 });
 
 // 服务访问
